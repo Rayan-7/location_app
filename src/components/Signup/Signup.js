@@ -5,6 +5,8 @@ import {
 } from 'react-native';
 
 import { Form, FormItem, Picker } from 'react-native-form-component';
+import User from '../../../server/models/User';
+import api from '../../../server/routes/userApi'
 
 const Signup = ({ route, navigation }) => {
     
@@ -15,11 +17,10 @@ const Signup = ({ route, navigation }) => {
 const Finish = () => {
     const userObj = new User(userId,email,firstName, lastName,gender)
     const userApi = new api()
+    console.log("user object "+userObj)
     userApi.addUser(userObj)
-    navigation.replace("UserPage", {
-        userId: userId,
-        isAdmin: userObj.isAdmin,
-        gender:gender
+    navigation.replace("MainScreen", {
+        userId: userId
     })
 }
 return (
