@@ -11,5 +11,10 @@ class noteApi {
             return snap.size
         });
     }
+    deleteNote(noteId) {
+        firestore().collection('Notes').doc(`${noteId}`).update({
+            isHide: true
+        });
+    }
 }
 export default noteApi; 

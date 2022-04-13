@@ -4,14 +4,14 @@ class Note {
       this.date=date
       this.title=title
       this.body = body
-      this.isVisible=false
+      this.isHide=false
       this.userId=userId
       return {
         id:this.id, 
         date:this.date,
         title: this.title,
         body: this.body,
-        isVisible:false,
+        isHide:false,
         userId:this.userId
       };
     }
