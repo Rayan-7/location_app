@@ -1,25 +1,32 @@
 import React, { useState } from 'react';
 import { Form, FormItem } from 'react-native-form-component';
 import { SafeAreaView} from 'react-native';
-const AddNote = () => {
-    const [ date, setDate ] = useState('');
+import dateFormat from "dateformat";
+import styles from './AddNoteStyle';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import NoteApi from '../../../server/routes/noteApi';
+import Note from '../../../server/models/Note';
+
+const AddNote = (props) => {
+    const [ date, setDate ] = useState(new Date(Date.now()));
     const [ title, setTitle ] = useState('');
     const [ body, setBody ] = useState('');
-	const [ email, setEmail ] = useState('');
-	const [ password, setPassword ] = useState('');
-	console.log(email + ' ' + password);
-
-	const finish = () => {
-		
+    let noteApi=new NoteApi();
+	const finish = async () => {
+		let notesCount=await noteApi.getAllNotesCount()
+        let noteObj=new Note(notesCount,date,title,body,props.userId)
+        console.log("this is my id "+noteObj.id)
+        noteApi.addNote(noteObj)
 	};
 	return (
 		<SafeAreaView>
+            <Icon onPress={()=>props.ModalVisible(false)} name="window-close" size={40} color="black" style={styles.windowClose}/>
 			<Form buttonText="Save" onButtonPress={() => finish()}>
 				<FormItem
 					label="Date"
-					value={date}
+					value={dateFormat(date, "d/m/yyyy - h:MM TT")}
+                    editable={false}
 					onChangeText={(date) => setDate(date)}
-					asterik
 				/>
 
 				<FormItem
@@ -27,7 +34,6 @@ const AddNote = () => {
 					placeholder="type the title here"
 					isRequired
 					value={title}
-					maxLength={15}
 					onChangeText={(title) => setTitle(title)}
 					asterik
 				/>

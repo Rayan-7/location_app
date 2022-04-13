@@ -29,7 +29,7 @@ const MainScreen = ({ route, navigation }) => {
 		<Provider>
 			<Portal>
 				<Modal animationType="slide" visible={modalVisible}>
-					<AddNote style={styles.AddNoteContainer} setCoursesData={setModalVisible} />
+					<AddNote style={styles.AddNoteContainer} ModalVisible={setModalVisible} userId={userId}/>
 				</Modal>
 			</Portal>
 
