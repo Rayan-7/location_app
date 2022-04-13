@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, SafeAreaView, StyleSheet, TextInput,FlatList, Button, Alert, Image } from 'react-native';
+import { Text, View, SafeAreaView, StyleSheet, TextInput,FlatList, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import auth from '@react-native-firebase/auth';
 import UserApi from '../../../server/routes/userApi';
@@ -7,10 +7,11 @@ import NoteApi from '../../../server/routes/noteApi';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import styles from './MainScreenStyle';
 import { Modal, Provider, Portal } from 'react-native-paper';
-import AddNote from '../AddNote/AddNote';
+import NoteScreen from '../NoteScreen/NoteScreen';
 import dateFormat from "dateformat";
 import firestore from '@react-native-firebase/firestore';
 import { List, ListItem } from 'react-native-elements';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const MainScreen = ({ route, navigation }) => {
 	const { userId } = route.params;
@@ -19,6 +20,7 @@ const MainScreen = ({ route, navigation }) => {
 	const [ userData, setUserData ] = useState({});
     const [ NoteSearch, setNoteSearch ] = useState('');
     const [notesData, setNotesData] = useState([])
+    const [noteId,setNoteId]=useState({});
 	let userApi = new UserApi();
     let noteApi = new NoteApi();
 
@@ -55,14 +57,29 @@ const MainScreen = ({ route, navigation }) => {
         return () => unsubscribe()
       }, [NoteSearch])
 
-	const Logout = () => {
+	const Logout = async () => {
 		auth().signOut().then(navigation.replace('Login'));
+        try {
+            await AsyncStorage.clear();
+        }
+        catch(exception) {
+            console.log(exception)
+        }
 	};
     const deleteNote=(noteId)=>{
         noteApi.deleteNote(noteId)
     }
+    const handleClick=(item)=>{
+        setNoteId(item.id)
+        setModalVisible(true)
+    }
     const renderItem = ({ item }) => (
+        <TouchableOpacity onPress={() => {
+            handleClick(item)
+          }}
+        >
         <ListItem bottomDivider>
+
           <Icon name="map" size={50} color="black" />
           <ListItem.Content>
             <ListItem.Title>{item.title}</ListItem.Title>
@@ -71,12 +88,13 @@ const MainScreen = ({ route, navigation }) => {
           <Icon name="minus" size={30} color="red" onPress={() => deleteNote(item.id)} />
           <ListItem.Chevron />
         </ListItem>
+        </TouchableOpacity>
       )
 	return (
 		<Provider>
 			<Portal>
 				<Modal animationType="slide" visible={modalVisible}>
-					<AddNote style={styles.AddNoteContainer} ModalVisible={setModalVisible} userId={userId} />
+					<NoteScreen style={styles.AddNoteContainer} ModalVisible={setModalVisible} userId={userId} noteId={noteId}/>
 				</Modal>
 			</Portal>
 
@@ -107,7 +125,9 @@ const MainScreen = ({ route, navigation }) => {
 							defaultValue={NoteSearch}
 						/>
 
-						<FlatList data={notesData} renderItem={renderItem} keyExtractor={(item) => item.id} />
+						<FlatList data={notesData} 
+                        renderItem={renderItem} 
+                        keyExtractor={(item) => item.id}/>
 					</View>
 				)}
 				<Icon onPress={() => setMapListVisible(false)} name="map" size={30} color="black" />

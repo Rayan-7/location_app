@@ -16,5 +16,10 @@ class noteApi {
             isHide: true
         });
     }
+    async getNote(id) {
+        return firestore().collection('Notes').doc(`${id}`).get().then(snapshot => {
+            return snapshot.data()
+        })
+    }
 }
 export default noteApi; 

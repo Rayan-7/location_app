@@ -21,6 +21,8 @@ target 'location_app' do
 
   pod 'react-native-location', :path => '../node_modules/react-native-location'
 
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-async-storage/async-storage'
+
   target 'location_appTests' do
     inherit! :complete
     # Pods for testing

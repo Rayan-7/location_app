@@ -1,23 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Form, FormItem } from 'react-native-form-component';
 import { SafeAreaView} from 'react-native';
+
 import dateFormat from "dateformat";
-import styles from './AddNoteStyle';
+import styles from './NoteScreenStyle';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import NoteApi from '../../../server/routes/noteApi';
 import Note from '../../../server/models/Note';
 
-const AddNote = (props) => {
-    const [ date, setDate ] = useState(new Date(Date.now()));
-    const [ title, setTitle ] = useState('');
-    const [ body, setBody ] = useState('');
+const NoteScreen = (props) => {
+	const [noteData,setNoteData]=useState({})
+	console.log("hey "+noteData)
+    const [ date, setDate ] = useState(noteData.Date??new Date(Date.now()));
+    const [ title, setTitle ] = useState(noteData.title??'');
+    const [ body, setBody ] = useState(noteData.body??'');
+
     let noteApi=new NoteApi();
 	const finish = async () => {
-		let notesCount=await noteApi.getAllNotesCount()
-        let noteObj=new Note(notesCount,date,title,body,props.userId)
+		if(!idProps){
+			idProps=await noteApi.getAllNotesCount()
+		}
+
+        let noteObj=new Note(idProps,date,title,body,props.userId)
         console.log("this is my id "+noteObj.id)
         noteApi.addNote(noteObj)
 	};
+
+	const fetchData = async () => {
+		const note = await noteApi.getNote(props.noteId);
+		setNoteData(note);
+	};
+	useEffect(() => {
+		fetchData();
+	}, []);
 	return (
 		<SafeAreaView>
             <Icon onPress={()=>props.ModalVisible(false)} name="window-close" size={40} color="black" style={styles.windowClose}/>
@@ -52,4 +67,4 @@ const AddNote = (props) => {
 	);
 };
 
-export default AddNote;
+export default NoteScreen;
