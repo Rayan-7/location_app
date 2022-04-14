@@ -35,7 +35,7 @@ const MainScreen = ({ route, navigation }) => {
 	}, []);
 
     useEffect(() => {
-        let ref=firestore().collection('Notes');
+        let ref=firestore().collection('Notes').orderBy('date', "desc");
         let noteLowerCase=NoteSearch.toLowerCase()
         if(noteLowerCase){
           ref=ref.where('title', '>=', noteLowerCase).where('title', '<=', noteLowerCase + '~')
