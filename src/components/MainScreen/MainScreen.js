@@ -20,7 +20,8 @@ const MainScreen = ({ route, navigation }) => {
 	const [ userData, setUserData ] = useState({});
     const [ NoteSearch, setNoteSearch ] = useState('');
     const [notesData, setNotesData] = useState([])
-    const [noteId,setNoteId]=useState({});
+    const [noteData,setNoteData]=useState({});
+
 	let userApi = new UserApi();
     let noteApi = new NoteApi();
 
@@ -70,7 +71,7 @@ const MainScreen = ({ route, navigation }) => {
         noteApi.deleteNote(noteId)
     }
     const handleClick=(item)=>{
-        setNoteId(item.id)
+        setNoteData(item)
         setModalVisible(true)
     }
     const renderItem = ({ item }) => (
@@ -94,7 +95,8 @@ const MainScreen = ({ route, navigation }) => {
 		<Provider>
 			<Portal>
 				<Modal animationType="slide" visible={modalVisible}>
-					<NoteScreen style={styles.AddNoteContainer} ModalVisible={setModalVisible} userId={userId} noteId={noteId}/>
+					<NoteScreen style={styles.AddNoteContainer} ModalVisible={setModalVisible} userId={userId} note={noteData}
+                    setNoteData={setNoteData}/>
 				</Modal>
 			</Portal>
 

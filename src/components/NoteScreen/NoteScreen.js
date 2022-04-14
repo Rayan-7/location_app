@@ -9,12 +9,12 @@ import NoteApi from '../../../server/routes/noteApi';
 import Note from '../../../server/models/Note';
 
 const NoteScreen = (props) => {
-	const [noteData,setNoteData]=useState({})
-	console.log("hey "+noteData)
-    const [ date, setDate ] = useState(noteData.Date??new Date(Date.now()));
-    const [ title, setTitle ] = useState(noteData.title??'');
-    const [ body, setBody ] = useState(noteData.body??'');
-
+	let note=props.note;
+	console.log("aaa "+note.title)
+    const [ date, setDate ] = useState(new Date(Date.now()));
+    const [ title, setTitle ] = useState(note.title??'');
+    const [ body, setBody ] = useState(note.body??'');
+	let idProps=note.id
     let noteApi=new NoteApi();
 	const finish = async () => {
 		if(!idProps){
@@ -24,24 +24,23 @@ const NoteScreen = (props) => {
         let noteObj=new Note(idProps,date,title,body,props.userId)
         console.log("this is my id "+noteObj.id)
         noteApi.addNote(noteObj)
+		ModalClose();
 	};
+	const ModalClose=()=>{
+		props.ModalVisible(false)
+		props.setNoteData('')
+	}
 
-	const fetchData = async () => {
-		const note = await noteApi.getNote(props.noteId);
-		setNoteData(note);
-	};
-	useEffect(() => {
-		fetchData();
-	}, []);
+
 	return (
 		<SafeAreaView>
-            <Icon onPress={()=>props.ModalVisible(false)} name="window-close" size={40} color="black" style={styles.windowClose}/>
+            <Icon onPress={()=>ModalClose()} name="window-close" size={40} color="black" style={styles.windowClose}/>
 			<Form buttonText="Save" onButtonPress={() => finish()}>
 				<FormItem
 					label="Date"
 					value={dateFormat(date, "d/m/yyyy - h:MM TT")}
                     editable={false}
-					onChangeText={(date) => setDate(date)}
+			
 				/>
 
 				<FormItem
