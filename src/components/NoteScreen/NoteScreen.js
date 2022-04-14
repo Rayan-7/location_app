@@ -1,29 +1,48 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState} from 'react';
 import { Form, FormItem } from 'react-native-form-component';
 import { SafeAreaView} from 'react-native';
-
 import dateFormat from "dateformat";
 import styles from './NoteScreenStyle';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import NoteApi from '../../../server/routes/noteApi';
 import Note from '../../../server/models/Note';
+import Geolocation from '@react-native-community/geolocation';
 
 const NoteScreen = (props) => {
 	let note=props.note;
-	console.log("aaa "+note.title)
+
     const [ date, setDate ] = useState(new Date(Date.now()));
     const [ title, setTitle ] = useState(note.title??'');
     const [ body, setBody ] = useState(note.body??'');
+	const [location,setLocation]=useState({})
 	let idProps=note.id
     let noteApi=new NoteApi();
 	const finish = async () => {
 		if(!idProps){
 			idProps=await noteApi.getAllNotesCount()
 		}
+		
+		Geolocation.getCurrentPosition(
+			(position) => {
+			  console.log(position.coords.latitude)
+			  let locationObj={
+				  "latitude":position.coords.latitude,
+				  "longitude":position.coords.longitude
+				}
+				let noteObj=new Note(idProps,date,title,body,props.userId,locationObj)
+				noteApi.addNote(noteObj)
+			  
+			},
+			(error) => {
+			  // See error code charts below.
+			  console.log(error.code, error.message);
+			},
+			{ enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+		);
 
-        let noteObj=new Note(idProps,date,title,body,props.userId)
-        console.log("this is my id "+noteObj.id)
-        noteApi.addNote(noteObj)
+        
+		
+		
 		ModalClose();
 	};
 	const ModalClose=()=>{

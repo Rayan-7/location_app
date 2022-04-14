@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-import {
-    Text, View, SafeAreaView, StyleSheet, TextInput,
-    Button, Alert, Image
-} from 'react-native';
+import {SafeAreaView} from 'react-native';
 
 import { Form, FormItem, Picker } from 'react-native-form-component';
 import User from '../../../server/models/User';
@@ -15,6 +12,8 @@ const Signup = ({ route, navigation }) => {
     const [gender, setGender] = useState('')
     const { userId, email } = route.params;
 const Finish = () => {
+    if(!firstName||!lastName)
+        return
     const userObj = new User(userId,email,firstName, lastName,gender)
     const userApi = new api()
     console.log("user object "+userObj)

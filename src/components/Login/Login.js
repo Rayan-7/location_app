@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Form, FormItem } from 'react-native-form-component';
 import auth from '@react-native-firebase/auth';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView,ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+
 
 const Login = ({ navigation }) => {
 	const [ email, setEmail ] = useState('');
 	const [ password, setPassword ] = useState('');
-	console.log(email + ' ' + password);
+	const [loading,setLoading]=useState(false);
 
 	
 	useEffect(() => {
@@ -45,6 +46,10 @@ const Login = ({ navigation }) => {
 	};
 
 	const finish = () => {
+		if(email==''||password=='')
+		{
+			  return
+		}
 		auth()
 			.signInWithEmailAndPassword(email, password)
 			.then(async (res) => {
@@ -77,10 +82,11 @@ const Login = ({ navigation }) => {
 						});
 				}
 			});
+			setLoading(true)
 	};
 	return (
 		<SafeAreaView>
-			<Form buttonText="Login" onButtonPress={() => finish()}>
+			<Form buttonText="Login" onButtonPress={() => finish()} >
 				<FormItem
 					label="Email"
 					isRequired
@@ -101,6 +107,9 @@ const Login = ({ navigation }) => {
 					asterik
 				/>
 			</Form>
+			{loading?
+			<ActivityIndicator size="small" color="#0000ff" />:null}
+			
 		</SafeAreaView>
 	);
 };

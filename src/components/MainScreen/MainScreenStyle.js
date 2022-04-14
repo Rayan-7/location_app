@@ -18,7 +18,28 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom:0,
         right:10,
+  
       
     },
+    buttonStyle:{
+      marginHorizontal: 10,
+        marginTop: 5,
+       alignItems:'center',
+       justifyContent:'center',
+       backgroundColor:'#fff',
+    },
+    LogoutButton:{
+      position: 'absolute',
+        top:0,
+        right:10,
+        marginBottom: 5,
+    },
+    welcomeText:{
+        fontSize: 25,
+        fontWeight: "bold",
+        alignItems:'center',
+
+    }
+
    });
 export default styles
