@@ -119,7 +119,7 @@ const MainScreen = ({ route, navigation }) => {
 					>
 						{notesData.map(note=>(
 
-						<Marker key={id}
+						<Marker key={note.id}
 						coordinate={{ latitude: note.location.latitude, longitude: note.location.longitude }}
 						pinColor={'purple'}
 						title={note.title}
